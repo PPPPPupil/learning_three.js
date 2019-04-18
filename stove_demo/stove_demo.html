@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+
+    <title>My first Three.js app</title>
+    <!--<script src="http://wow.techbrood.com/libs/three.r73.js"></script>-->
+    <script src="three.js-dev/build/three.js" data-ke-src="three.js-dev/build/three.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(95, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+         //设置阴影允许
+        renderer.shadowMapEnabled = true;
+        document.body.appendChild(renderer.domElement);
+        // 各种控制尝试
+        // 设置相机初始位置
+        camera.position.z = 8;
+        // var controls = new THREE.OrbitControls( camera, renderer.domElement);
+        // controls.update();
+
+
+
+
+        // 炉子
+        //var texture = new THREE.TextureLoader().load("image.jpg"); //加载图片
+
+        var cube1 = new THREE.Mesh(
+            //new THREE.BoxGeometry( 3, 3, 3 ),
+            new THREE.CylinderGeometry(2,2,3,128,openEnded=false),
+            new THREE.MeshBasicMaterial({
+                color: "white",
+                //map:texture,
+                map: THREE.ImageUtils.loadTexture("image.jpg"),
+                side: THREE.DoubleSide
+        })
+        );
+        cube1.userData = { URL: "http://www.baidu.com"};
+
+        //----------------------调用鼠标事件
+        var raycaster = new THREE.Raycaster();//光线投射，确定鼠标点击位置
+        var mouse = new THREE.Vector2();//创建二维平面
+        window.addEventListener("click",pickupObjects);//页面绑定鼠标点击事件,
+        function pickupObjects(e){
+         //将鼠标点击位置的屏幕坐标转成threejs中的标准坐标
+          mouse.x = (e.clientX/window.innerWidth)*2 -1;
+          mouse.y = -(e.clientY/window.innerHeight)*2 + 1;
+          //从相机发射一条射线，经过鼠标点击位置
+          raycaster.setFromCamera(mouse,camera);
+          //计算射线相机到的对象，可能有多个对象，因此返回的是一个数组，按离相机远近排列
+          var intersects = raycaster.intersectObjects(scene.children);
+          for ( var i = 0; i < intersects.length; i++ ) {
+              intersects[ i ].object.material.color.set( "blue" ); //点击后变为蓝色
+          }
+          if (intersects.length > 0) {
+              console.log("you clicked something");
+              //window.open(intersects[0].object.userData.URL); // 常规打开窗口
+              openWin(intersects) //调用自定义打开窗口
+          }
+}
+        // 定义函数，在本窗口内打开新的小窗口，intersects为需要传入的射线相机找到的对象
+        function openWin(intersects){
+            // 打开窗口1 目标物体自带的超链接
+            window.open(intersects[0].object.userData.URL,"newwindow1", "height=100, width=100, top=100, left=100,toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no"); // 常规打开窗口
+            // 打开窗口2
+            OpenW= window.open("","newwindow2", "height=100, width=100, top=0, left=0,toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+            OpenW.document.write("<head>")
+            OpenW.document.write("<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">")
+            OpenW.document.write("<TITLE>例子</TITLE>")
+            OpenW.document.write("</head>")
+
+            OpenW.document.write("<BODY BGCOLOR=#ffffff>")
+
+            OpenW.document.write("<h1>Hello!</h1>")
+
+            OpenW.document.write("New window opened!")
+
+            OpenW.document.write("</BODY>")
+
+            OpenW.document.write("</HTML>")
+
+            OpenW.document.close()
+        }
+        //----------------------
+
+
+
+        // 设置初始位置
+        cube1.position.set(0,-3,1)
+        scene.add(cube1);
+
+
+        // 圆柱形cube2~4
+        var cube2 = new THREE.Mesh(
+            new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
+            new THREE.MeshBasicMaterial({
+            color: "red"
+        })
+        );
+
+
+        var cube3 = new THREE.Mesh(
+            new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
+            new THREE.MeshBasicMaterial({
+            color: "yellow"
+        })
+        );
+
+        var cube4 = new THREE.Mesh(
+            new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
+            new THREE.MeshBasicMaterial({
+            color: "green"
+        })
+        );
+
+        // 设置超链接
+        cube2.userData = { URL: "https://www.yahoo.com/"};
+        cube3.userData = { URL: "https://www.so.com"};
+        cube4.userData = { URL: "https://www.sogou.com/"};
+        // 设置初始位置
+        cube2.position.set(-1,1,1)
+        cube3.position.set(0,0,1)
+        cube4.position.set(1,-1,1)
+        scene.add(cube2);
+        scene.add(cube3);
+        scene.add(cube4);
+
+        border = new THREE.BoxHelper( cube1,0x0dc3b4 );//设置边框，这个边框不会旋转
+        edges = new THREE.EdgesHelper( cube1, 0x1535f7 );//设置边框，可以旋转
+        //scene.add(edges)
+
+
+
+
+        //在循环函数外初始化震荡幅度 幅度_increment设置不能被position.y的数值整除，否则会趋于同一平面
+        _increment = 0.3;
+        // 定义震荡函数
+         updown = function (cube_arg) {
+             //_increment = 0.1;
+
+             if  (cube_arg.position.y >= 1) {
+                _increment = -0.3;
+            } else if (cube_arg.position.y <= -1){
+                _increment = 0.3;
+            }
+
+            cube_arg.position.y += _increment;
+        }
+
+        var render = function() {
+            requestAnimationFrame(render);
+
+              //cube1.rotation.x += 0.1;
+            cube1.rotation.y += 0.03;
+
+            updown(cube2)
+            updown(cube3)
+            updown(cube4)
+
+            //鼠标
+            //controls.update();
+
+
+
+
+            // if  (cube2.position.x > 10) {
+            //     _increment = -0.1
+            // } else if (cube2.position.x < -10){
+            //     _increment = 0.1
+            // }
+            //
+            // cube2.position.x += _increment;
+            //
+            // //console.log(cube2.position)
+
+            renderer.render(scene, camera);
+        };
+
+        render();
+    </script>
+</body>
+
+</html>
