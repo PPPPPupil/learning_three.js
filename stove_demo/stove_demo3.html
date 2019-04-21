@@ -67,12 +67,12 @@
                 )
 
             )
-            cubet.position.set(-5,-3,1)
+
             scene.add(cubet)
             //炉子
             // var texture = new THREE.TextureLoader().load("image.jpg");
             cube1 = new THREE.Mesh(
-                 new THREE.CylinderGeometry(2,2,3,128,openEnded=false),
+                 new THREE.CylinderGeometry(2,2,3,128,openEnded=true),
                  new THREE.MultiMaterial(
                      [
                          new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove.jpg") } ), // 侧面
@@ -83,28 +83,29 @@
             );
             //圆柱2~4
             cube2 = new THREE.Mesh(
-            new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
+            new THREE.CylinderGeometry( 0.25, 0.25, 3 ),
             new THREE.MeshBasicMaterial({
             color: "black"
         })
         );
             cube3 = new THREE.Mesh(
-            new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
+            new THREE.CylinderGeometry( 0.25, 0.25, 3 ),
             new THREE.MeshBasicMaterial({
             color: "black"
         })
         );
             cube4 = new THREE.Mesh(
-            new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
+            new THREE.CylinderGeometry( 0.25, 0.25, 3 ),
             new THREE.MeshBasicMaterial({
             color: "black"
         })
         );
             // Object位置
             cube1.position.set(0,-3,1);
-            cube2.position.set(-1,1,1)
-            cube3.position.set(0,0,2)
-            cube4.position.set(1,-1,1)
+            cube2.position.set(-1,0,1)
+            cube3.position.set(0,-1,2)
+            cube4.position.set(1,-2,1)
+            cubet.position.set(-5,-3,1)
             //添加Object到scene
             scene.add(cube1);
             scene.add(cube2);
@@ -211,10 +212,10 @@
         _increment = 0.3;
         // 定义震荡函数
          O_updown = function (cube_arg) {
-             if  (cube_arg.position.y >= 1) {
-                _increment = -0.3;
-            } else if (cube_arg.position.y <= -1){
-                _increment = 0.3;
+             if  (cube_arg.position.y >= 0) {
+                _increment = -0.03;
+            } else if (cube_arg.position.y <= -2){
+                _increment = 0.03;
             }
             cube_arg.position.y += _increment;
         }
