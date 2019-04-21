@@ -155,7 +155,14 @@
             //计算射线相机到的对象，可能有多个对象，因此返回的是一个数组，按离相机远近排列
             var intersects = raycaster.intersectObjects(scene.children);
             for (var i = 0; i < intersects.length; i++) {
-                intersects[i].object.material.color.set("blue"); //点击后变为蓝色
+                // 如果能变就变，不能变就不变
+                if (intersects[i].object.material.color){
+                    let colori = intersects[i].object.material.color;
+                    console.log(colori);
+                    intersects[i].object.material.color.set("blue");
+                    intersects[i].object.material.color.set(colori)
+                }
+
             }
             if (intersects.length > 0) {
                 console.log("you clicked something");
@@ -199,7 +206,7 @@
         function initControls(){
             controls = new THREE.OrbitControls(camera, renderer.domElement);
             // controls = new THREE.TrackballControls(camera, renderer.domElement); // TrackballControls is not a constructor?????
-            controls.minDistance = 10;
+            controls.minDistance = 1;
 	        controls.maxDistance = 30;
         }
 
