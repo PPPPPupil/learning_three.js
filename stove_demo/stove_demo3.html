@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<!--demo3与demo2的目标区别：实现分屏加载模型与网页-->
 <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
 
@@ -13,6 +13,7 @@
             margin: 0;
         }
         canvas {
+
             width: 100%;
             height: 100%
         }
@@ -20,6 +21,8 @@
 </head>
 
 <body>
+    <!--<div id="three"> </div>-->
+    <!--<div name="text"> <h1> 这是一条标题 ，目的是与模型分开显示</h1></div>-->
     <script>
         // 创建场景
         var scene;
@@ -42,46 +45,65 @@
             renderer = new THREE.WebGLRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.shadowMapEnabled = true;
+            renderer.setClearColor('antiquewhite')// 更改画布背景颜色
             document.body.appendChild(renderer.domElement);
 
         }
         //添加对象
-        var cube1,cube2,cube3,cube4;
+        var cube1,cube2,cube3,cube4,cubet;
         function initObject() {
+            //
+            cubet = new THREE.Mesh(
+                new THREE.BoxGeometry(3,3,3,3),
+                new THREE.MultiMaterial(
+                    [
+                        new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove.jpg") } ), // right
+                        new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove.jpg") } ), // left
+                        new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove_up1.jpg") } ), // top
+                        new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove_down.jpg") } ), // bottom
+                        new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove.jpg") } ), // front
+                        new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove.jpg") } ), // back
+                    ]
+                )
+
+            )
+            cubet.position.set(-5,-3,1)
+            scene.add(cubet)
             //炉子
             // var texture = new THREE.TextureLoader().load("image.jpg");
             cube1 = new THREE.Mesh(
                  new THREE.CylinderGeometry(2,2,3,128,openEnded=false),
-                 new THREE.MeshBasicMaterial({
-                     color: "white",
-                     // map: THREE.ImageUtils.loadTexture("image.jpg"),// 过时了
-                     map: new THREE.TextureLoader().load("stove2.jpg"),
-                     side: THREE.DoubleSide
-                 })
+                 new THREE.MultiMaterial(
+                     [
+                         new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove.jpg") } ), // 侧面
+                         new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove_up.jpg") } ), // 上顶面
+                         new THREE.MeshBasicMaterial( { map:new THREE.TextureLoader().load("stove_down.jpg") } ), // 下顶面
+                         ]
+                 )
             );
             //圆柱2~4
             cube2 = new THREE.Mesh(
             new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
             new THREE.MeshBasicMaterial({
-            color: "red"
-                 })
+            color: "black"
+        })
         );
             cube3 = new THREE.Mesh(
             new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
             new THREE.MeshBasicMaterial({
-            color: "yellow"
-                 })
+            color: "black"
+        })
         );
             cube4 = new THREE.Mesh(
             new THREE.CylinderGeometry( 0.25, 0.25, 2 ),
             new THREE.MeshBasicMaterial({
-            color: "green"
-                 })
+            color: "black"
+        })
         );
             // Object位置
             cube1.position.set(0,-3,1);
             cube2.position.set(-1,1,1)
-            cube3.position.set(0,0,1)
+            cube3.position.set(0,0,2)
             cube4.position.set(1,-1,1)
             //添加Object到scene
             scene.add(cube1);
@@ -210,6 +232,7 @@
          var render = function() {
             requestAnimationFrame(render);
             O_rotation(cube1);
+            O_rotation(cubet);
             O_updown(cube2);
             O_updown(cube3);
             O_updown(cube4);
@@ -217,10 +240,11 @@
             renderer.render(scene, camera);
         };
         //运行
-        document.getElementById("three").innerHTML = threeStart();
+        // document.getElementById("three").innerHTML = threeStart();
+        threeStart();
     </script>
 
-    <div id="three"> </div>
+
 
 </body>
 
