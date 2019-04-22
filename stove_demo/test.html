@@ -9,9 +9,10 @@
 	<body>
 		<!--<script src="//wow.techbrood.com/libs/three.r73.js"></script>-->
         <!--<script src="js/three.js-dev/src/loaders/ObjectLoader.js"></script>-->
-        <script src="js/three.js-dev/build/three.js" data-ke-src="js/three.js-dev/build/three.js"></script>
-            <script src="js/three.js-dev/examples/js/loaders/deprecated/LegacyJSONLoader.js"></script>
 
+
+        <script src="js/three.js-dev/build/three.js" data-ke-src="js/three.js-dev/build/three.js"></script>
+<script src="js/three.js-dev/examples/js/controls/OrbitControls.js"></script>
 		<script>
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
@@ -26,14 +27,28 @@
 			// scene.add( cube );
 
 
-			//test 导出的时候需要勾选sence
+			//test 导出的时候需要勾选sence（颜色咋整）,sence+materials无法显示，+light后会有阴影
 
             const loader = new THREE.ObjectLoader();
-            loader.load('js/444.json',function (object) {
+            loader.load('js/1.json',function (object) {
 
                 scene.add(object);
                 }
             )
+
+
+            var controls = new THREE.OrbitControls(camera, renderer.domElement);
+            // controls = new THREE.TrackballControls(camera, renderer.domElement); // TrackballControls is not a constructor?????
+            // controls.minDistance = 1;
+	        // controls.maxDistance = 30;
+
+
+            // const loader = new THREE.ObjectLoader();
+            // loader.load('js/111.json',function (object) {
+            //
+            //     scene.add(object);
+            //     }
+            // )
 
             // const loader = new THREE.LegacyJSONLoader();
             // loader.load('js/222.json',function (object) {
@@ -49,7 +64,7 @@
 
 				cube.rotation.x += 0.1;
 				cube.rotation.y += 0.1;
-
+                controls.update();//实时更新相机控制
 				renderer.render(scene, camera);
 			};
 
